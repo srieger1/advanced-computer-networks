@@ -67,7 +67,7 @@ containerlab destroy -t setup.clab.yml --cleanup
 
 1. `ping -c3 10.10.20.3` vom `client` aus. Wie hoch ist die RTT?
 2. `traceroute -n 10.10.20.3` — wie viele Hops? Warum genau diese?
-3. Installieren Sie `tcpdump` auf dem `router` (`apk add tcpdump` — fehlt im `frrouting/frr`-Image)
+3. Installieren Sie `tcpdump` auf dem `router` (zunächst Shell auf dem Router starten (NICHT: vtysh) `docker exec -it clab-acn-l0-setup-router sh` und dann `apk add tcpdump` — fehlt im `frrouting/frr`-Image)
    und sniffen Sie mit `tcpdump -nvi eth2 icmp` mit, während Sie parallel auf dem `client` einen
    Dauer-Ping (`ping 10.10.20.3`) laufen lassen.
    - **Frage:** Welche Pakete sehen Sie — Echo Request, Echo Reply oder beides? Ändert sich die TTL,
