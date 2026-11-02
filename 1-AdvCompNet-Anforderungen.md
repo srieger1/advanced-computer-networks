@@ -312,7 +312,7 @@ Die Utility-Kurve sagt, wie viel Bitrate sich überhaupt lohnt — und wann Verf
 Wie viele Bits müssen unterwegs sein, damit die Leitung nicht leer läuft?
 
 ```
-BDP = Bitrate × Latenz                        → „continuously fill the pipe"
+BDP = Bitrate × RTT                           → „continuously fill the pipe"
 Durchsatz = Größe / (RTT + Größe / Bitrate)   → First-Byte-Delay
 ```
 
