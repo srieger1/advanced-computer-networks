@@ -95,9 +95,12 @@ Quell-Repo enthält zusätzlich Material, das hier bewusst **nicht** enthalten i
   Lab-Laufzeitartefakte (u. a. bei `containerlab deploy` generierte TLS-Schlüssel) und
   Altbestand früherer Semester (`Labs/!old/`).
 
-Aktualisiert wird dieser Stand nie direkt hier, sondern per **Clean-Start-Export** aus dem
-Quell-Repo: Kopie aller nicht ignorierten Dateien, ein Commit („Update …"), Force-Push auf
-`main`. Die CI baut daraus die PDFs und veröffentlicht sie über GitHub Pages.
+Aktualisiert wird dieser Stand nie direkt hier, sondern per **Export** aus dem Quell-Repo:
+Kopie aller nicht ignorierten Dateien, dann ein **Commit pro Veröffentlichung** mit
+Änderungsbeschreibung (z. B. „Labs: ECMP-Sichtbarkeit erklärt") und Push auf `main`. Die
+Historie hier zeigt also pro Veröffentlichung, **was sich geändert hat** — Diffs sind lesbar.
+Die CI baut daraus die PDFs und veröffentlicht sie über GitHub Pages; Fixes wie Korrekturen
+an Folien oder Labsheets sind so für Studierende nachvollziehbar.
 
 ## Lizenz
 
