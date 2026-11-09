@@ -55,7 +55,7 @@ jobs:
           node tools/slidecheck.mjs
           node tools/linkcheck.mjs
 
-      - name: Nicht-öffentliche Bilder ausblenden (figures/*/copyright/ ist nicht im Repo)
+      - name: Nicht-öffentliche Bilder durch Dateinamen-Hinweis ersetzen (figures/*/copyright/ ist nicht im Repo)
         run: |
           # Bild-Direktiven auf copyright-kritische Bilder werden durch eine Textzeile mit
           # dem Kapitel-/Dateinamen ersetzt — sonst zeigt Marp den Alt-Text als kaputtes
