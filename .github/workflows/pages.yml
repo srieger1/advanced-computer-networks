@@ -5,9 +5,11 @@ name: PDFs bauen und veröffentlichen
 # ins Repository committet — sie sind jederzeit reproduzierbar (`devenv shell -- pdfs`).
 #
 # Copyright-kritische Bilder (figures/*/copyright/) sind nicht Teil des Repos: Die Decks
-# verweisen lokal darauf (relative Pfade), die CI streicht diese Zeilen VOR dem Rendern,
-# damit Marp kein kaputtes Bild-Symbol rendert. Die Fassungen in public/ enthalten dieses
-# Material folglich nicht — es erscheint nur in der lokalen Präsentation (Marp/Slidev).
+# verweisen lokal darauf (relative Pfade), die CI ersetzt die Bild-Direktive VOR dem Rendern
+# durch eine Textzeile **[Abbildung: <kapitel>/<datei>]** — so zeigt Marp kein kaputtes
+# Bild-Symbol, und Studierende können die Bilder (ZIP auf Moodle) über den Dateinamen zuordnen.
+# Die Fassungen in public/ enthalten dieses Material folglich nicht — es erscheint nur in der
+# lokalen Präsentation (Marp/Slidev).
 
 on:
   push:
@@ -55,10 +57,11 @@ jobs:
 
       - name: Nicht-öffentliche Bilder ausblenden (figures/*/copyright/ ist nicht im Repo)
         run: |
-          # Zeilen, die auf copyright-kritische Bilder verweisen, werden aus der öffentlichen
-          # Fassung entfernt — sonst zeigt Marp den Alt-Text als kaputtes Bild-Symbol an.
+          # Bild-Direktiven auf copyright-kritische Bilder werden durch eine Textzeile mit
+          # dem Kapitel-/Dateinamen ersetzt — sonst zeigt Marp den Alt-Text als kaputtes
+          # Bild-Symbol an; der Name ordnet das Bild zum Moodle-ZIP zu.
           for f in [0-9]-AdvCompNet-*.md; do
-            sed -i '/figures\/[a-z0-9-]*\/copyright\//d' "$f"
+            sed -E -i 's|!\[[^]]*\]\(figures/([a-z0-9-]+)/copyright/([^)]+)\)|**[Abbildung: \1/\2]**|' "$f"
           done
           if grep -n "copyright/" [0-9]-AdvCompNet-*.md; then
             echo "::error::Verweis auf nicht-öffentliches Bild steht noch im Deck"; exit 1
