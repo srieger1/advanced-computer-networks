@@ -562,8 +562,7 @@ Aufbau eines Rechenzentrums – Ressourcen:
 </div>
 
 - 💡 [Jellyfish, NSDI 2012](https://www.usenix.org/conference/nsdi12/technical-sessions/presentation/singla) – ~25 % mehr Server als Fat-Tree bei gleichem Switch-Budget
-- 💡 [Überblick DC-Topologien (arXiv 2016)](https://arxiv.org/abs/1605.01777) · [MODRIC (arXiv 2025)](https://arxiv.org/abs/2503.12200)
-
+- 💡 [Überblick DC-Topologien (arXiv 2016)](https://arxiv.org/abs/1605.01777) · [MODRIC (arXiv 2025)](https://arxiv.org/abs/2503.12200) · [Amazon RNG](https://www.aboutamazon.com/stories/aws-random-graph-theory-data-center-network-design) ([Paper](https://arxiv.org/pdf/2604.15261)) so spart Amazon 69% der Router im RZ - Zufall statt Hierarchie ([heise](https://www.heise.de/news/AWS-Zufall-statt-Hierarchie-im-Rechenzentrum-11322774.html))
 <div class="food-for-thought">
 
 🧠 Forschungsgedanke: Wann lohnt ein Zufallsgraph statt Clos – und warum wird er kaum produktiv gebaut?

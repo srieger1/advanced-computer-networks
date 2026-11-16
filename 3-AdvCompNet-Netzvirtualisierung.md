@@ -321,7 +321,7 @@ Kapselung · VNI und VTEP · Flood & Filter vs. EVPN · Abgrenzung zum VLAN
 
 **Fazit:** VXLAN trennt die Adressierung des virtuellen Netzes von der des physischen.
 
-💡 [RFC 7348](https://www.rfc-editor.org/rfc/rfc7348) – VXLAN: Layer 2 über Layer 3, UDP-Port 4789
+💡 [RFC 7348](https://www.rfc-editor.org/rfc/rfc7348) – VXLAN: Layer 2 über Layer 4, UDP-Port 4789
 
 *7E §9.4 – Virtual Networks for Datacenters*
 
