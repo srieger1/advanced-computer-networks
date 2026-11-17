@@ -11,6 +11,8 @@ kompilieren, laden, Laufzeit-Tabellen manipulieren — statt per Weboberfläche 
 - P4-Programme mit `p4c` kompilieren (bmv2-Target, v1model-Architektur) und in `simple_switch` laden
 - Laufzeit-Tabellen per `simple_switch_CLI` manipulieren (`table_add`, Multicast-Gruppen)
 - Verstehen, wie Parser → Ingress → Egress → Deparser zusammenspielen
+- **L3-Routing in der Data Plane** (LPM, TTL, Prüfsumme) und was „komplettes Routing“ in
+  der Data Plane bedeutet: Transit *und* direkt angeschlossene Netze
 - Grenzen und Stärken der Software-Data-Plane einordnen (vgl. K6: Tofino-EOL, DPUs/IPUs)
 
 ## Voraussetzungen
@@ -42,9 +44,11 @@ kompilieren, laden, Laufzeit-Tabellen manipulieren — statt per Weboberfläche 
 
 ```bash
 cd Labs/L4_p4_intro
-containerlab deploy  -t p4.clab.yml     # baut Beispiel 1 (Repeater) automatisch
+containerlab deploy  -t p4.clab.yml      # Szenario 1: Repeater (Aufgabe 1) + L2-Switch (Aufgabe 2/3)
 containerlab inspect -t p4.clab.yml
 containerlab destroy -t p4.clab.yml --cleanup
+containerlab deploy  -t routing.clab.yml # Szenario 2: IPv4-Routing (Aufgabe 5)
+containerlab destroy -t routing.clab.yml --cleanup
 ```
 
 > [!TIP]
@@ -118,6 +122,89 @@ docker exec -d clab-acn-l4-p4-switch sh -c \
 
 ---
 
+## Aufgabe 5 — Szenario 2: IPv4-Routing in der Data Plane
+
+Ein zweites Deployment mit **zwei** Switches, die dasselbe P4-Programm fahren, aber ein
+anderes: `ipv4_routing.p4` matcht auf **Layer 3** (LPM auf der Ziel-IP statt exakt auf der
+Ziel-MAC), dekrementiert die TTL und rechnet die IPv4-Prüfsumme in `MyComputeChecksum` neu.
+Hosts in zwei /24-Subnetzen:
+
+```
+ h1 ─── s1 (ipv4_routing.p4) ─── s2 (ipv4_routing.p4) ─── h2
+10.0.1.1/24        (L3-Match/Action)          10.0.2.2/24
+```
+
+```bash
+containerlab deploy -t routing.clab.yml
+```
+
+> [!TIP]
+> Topologie im Browser: `containerlab graph -t routing.clab.yml`.
+
+### Aufgabe 5.1 — Programm lesen und vergleichen
+
+1. Lesen Sie `p4/ipv4_routing.p4`: Welche Unterschiede sehen Sie gegenüber `l2switch.p4`?
+   (Match-Key: LPM auf `destAddr` statt exakt auf der MAC; TTL-Dekrement in `ipv4_forward`;
+   `MyComputeChecksum` berechnet die IPv4-Prüfsumme neu.)
+2. **Frage:** Warum muss nach der TTL-Dekrementierung die IPv4-Prüfsumme neu berechnet
+   werden — und warum reicht bei dieser vereinfachten Route der Checksum-Update trotz
+   des geänderten Headers aus (welche Felder fehlen im Feld-Set der Checksum)?
+
+### Aufgabe 5.2 — Hosts konfigurieren (diesmal „außenrum")
+
+Die bmv2-Switches haben **keinen IP-Stack** — sie antworten nicht auf ARP und stellen
+keinen Gateway-Dienst bereit. Die Hosts brauchen deshalb Device-Routen plus statische
+Neighbor-Einträge. Achtung: `apk add iproute2` ist nötig (Alpine-BusyBox kennt `ip neigh`
+nicht), und `onlink` kollidiert mit Device-Routen:
+
+```bash
+docker exec clab-acn-l4-routing-h1 sh -c 'apk add -q iproute2; ip route add 10.0.2.0/24 dev eth1; ip neigh add 10.0.2.2 lladdr <mac-h2> dev eth1 nud permanent'
+docker exec clab-acn-l4-routing-h2 sh -c 'apk add -q iproute2; ip route add 10.0.1.0/24 dev eth1; ip neigh add 10.0.1.1 lladdr <mac-h1> dev eth1 nud permanent'
+```
+
+MACs der Hosts lesen: `ip link show eth1` auf `h1`/`h2`.
+**Frage:** Warum funktioniert hier keine klassische Gateway-Konfiguration
+(`ip route add default via …`)? (Es gibt keine IP-Adresse am Switch, auf die ARP
+auflösen könnte — genau deshalb haben echte P4-Designs ARP-Programme oder ARP-Offload.)
+
+### Aufgabe 5.3 — Routing-Tabellen füllen: erst Transit, dann komplett
+
+1. Installieren Sie zunächst **nur** die Transit-Regeln (Pakete von einem Host zum
+   anderen über den jeweils anderen Switch):
+   ```text
+   # s1: table_set_default ipv4_lpm drop
+   # s1: table_add ipv4_lpm ipv4_forward 10.0.2.0/24 => <mac-h2> 2
+   # s2: table_set_default ipv4_lpm drop
+   # s2: table_add ipv4_lpm ipv4_forward 10.0.1.0/24 => <mac-h1> 2
+   ```
+2. `ping` von `h1` — **schlägt fehl**. Analysieren Sie, wo die Pakete liegen: Die
+   Switches leiten den Transit korrekt weiter — aber **Rückweg und letzte Meile** fehlen:
+   `s1` kennt sein direkt angeschlossenes Subnetz nicht als Route, `s2` hat keinen Eintrag
+   für 10.0.2.0/24 → `h2`.
+3. Ergänzen Sie die **direkt angeschlossenen Subnetze**:
+   ```text
+   # s1: table_add ipv4_lpm ipv4_forward 10.0.1.0/24 => <mac-h1> 1
+   # s2: table_add ipv4_lpm ipv4_forward 10.0.2.0/24 => <mac-h2> 1
+   ```
+4. `ping` von `h1` — jetzt 0 % Verlust (gemessen: RTT ≈ 2–3 ms, bmv2 ist die Bremse).
+5. **Frage:** Welche Lektion verbinden Sie mit Schritt 2→3? (Routing in der Data Plane
+   braucht die **komplette** Weiterleitungsfunktion — Transit *und* direkt angeschlossene
+   Netze. Im Original-Exercise waren genau diese Einträge die Dateien
+   `commands-s1.txt`/`commands-s2.txt` im
+   [p4-boilerplate](https://github.com/prona-p4-learning-platform/p4-boilerplate) von
+   learn-sdn-hub — dort vordefiniert, hier sichtbar zum Selber-Befüllen.)
+
+> [!CAUTION]
+> **Der klassische Learning Switch mit `p4utils`-Controller wurde bewusst nicht
+> portiert**: die p4utils-/Thrift-Kombination bricht wiederholt auf neueren
+> Ubuntu-/p4c-Basen (Wartungsaufwand über mehrere Semester belegt). `simple_switch_CLI`
+> deckt dieselbe Didaktik (Control-Plane/Data-Plane-Trennung, Flow-Level-Verhalten) ab —
+> nur ohne automatisches Lernen. Wer will, baut es als Zusatzaufgabe selbst: ein
+> Python-Listener auf dem bmv2-Lern-Channel (nanomsg) plus `table_add`-Aufrufe; Vorlage:
+> `Example3-LearningSwitch/learning_switch_controller_app.py` im p4-boilerplate-Repo.
+
+---
+
 ## Verifikation (erwartete Ergebnisse)
 
 | Prüfschritt | Erwartung |
@@ -129,6 +216,10 @@ docker exec -d clab-acn-l4-p4-switch sh -c \
 | `table_dump` nach Befüllung | 3 Einträge: broadcast + 2 × forward |
 | `mc_dump` | `mgrp(1) → (rid=0) → ports=[1, 2]` |
 | `ping` h1 → h2 (Beispiel 2, **nach** Einträgen) | 0 % Verlust, RTT < 2 ms |
+| `containerlab inspect -t routing.clab.yml` (Szenario 2) | 4 Knoten `running` |
+| `ping` h1 → h2 (Szenario 2, **nur Transit-Entries**) | 100 % Verlust — Rückweg/letzte Meile fehlt |
+| `table_dump ipv4_lpm` (s1/s2, Szenario 2 komplett) | je 2 Einträge: direkt angeschlossen + Transit |
+| `ping` h1 → h2 (Szenario 2, **komplett**) | 0 % Verlust, RTT ≈ 2–3 ms (bmv2-Bremse) |
 
 ## Troubleshooting
 

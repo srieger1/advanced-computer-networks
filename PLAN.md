@@ -85,7 +85,7 @@ Zielstack (Entscheidungen 2026-09-24/10-04): **FRR, wo es geht** (`frrouting/frr
 | L1 | `Labs/L1_dcn_l2_lag/` | DCN Layer 2: STP-Ring vs. LACP-Bond, **+ VLAN/VXLAN (Szenario 3)** (containerlab, Bridges/Bonds, FRR) | zu L3/L4 (K2) **und L5 (K3)** | ✅ gebaut & verifiziert (STP ~30 s Ausfall vs. LACP 0 % Verlust; VLAN-Tag und VXLAN-Kapselung sichtbar) |
 | L2 | `Labs/L2_dcn_bgp_fabric/` | DCN Layer 3: Leaf-Spine-BGP-Fabric, ECMP, Fehlertoleranz/BFD, Konvergenzmessung (FRR `bgpd`) | zu L4 (K2) | ✅ gebaut & verifiziert (6/6 BGP, 12/12 Pings, BFD-Failover) |
 | L3 | `Labs/L3_sdn_mininet/` | SDN mit Mininet/OpenFlow: eigenes Image `acn-l3-mininet` (Mininet 2.3.0 + OVS 3.3.9 + os-ken 4.2.2), Controller-Verhalten messbar | zu L6/L7 (K4) | ✅ gebaut & verifiziert (pingall 0 %, ohne Controller 100 %, mit os-ken 0 %) |
-| L4 | `Labs/L4_p4_intro/` | Programmable Data Plane: p4lang-Images (`p4c` 1.2.5.18 + `bmv2` 1.15.7) in containerlab, P4-Code vorbereitet (Aufgaben von `5_p4_intro` übernommen) | zu L9/L10 (K6) | ✅ gebaut & verifiziert (Tabellenbefüllung 0 %, P4Runtime vorbereitet) |
+| L4 | `Labs/L4_p4_intro/` | Programmable Data Plane: p4lang-Images (`p4c` 1.2.5.18 + `bmv2` 1.15.7) in containerlab; Repeater, L2-Switch (Multicast) + **IPv4-Routing-Szenario (Szenario 2)**; Learning-Switch (p4utils) bewusst nicht portiert (Wartungsrisiko) | zu L9/L10 (K6) | ✅ gebaut & verifiziert (L2-Switch + Multicast 0 %, Routing h1→h2 über 2 Switches 0 %) |
 | L5 | `Labs/L5_multipath_quic_taps/` | **Neu:** Multipath QUIC & TAPS — Client mit 2 Pfaden (10 ms vs. 80 ms + 2 % Loss, `netem`), Single-Path vs. Aggregation vs. Failover, Scheduling-Vergleich, Reordering/Head-of-Line, TAPS-Anwendung (RFC 9621–9623); Stack: **picoquic** (Fallback ngtcp2), qlog/`tshark` als Beobachtungsweg | zu L11/L12 (K7) | ⏳ neu zu bauen (P6) |
 | L6 | `Labs/L6_networking_for_ai/` | **Neu:** Networking for AI — Leaf-Spine + Incast (`iperf3 -P`), Tail-Latency/Straggler, ECN/AQM (`ss -ti`), ECMP vs. Packet Spraying, Ring-AllReduce-Simulation (Python), IB/RoCE/UEC-Diskussion | zu L13/L14 (K8) | ⏳ neu zu bauen (P6) |
 
@@ -93,7 +93,9 @@ Fragen: **erledigt (2026-11-17)** — `Questions/k1…k8.md` in Markdown (je Kap
 migriert aus `../ACN-WiSe2526/Questions/*.tex`; K3 (Netzvirtualisierung) und K8 (Netze für KI)
 neu, OpenFlow-Detailfragen gestrafft (K4), DPU-Vertiefung nach K8 verschoben, RDMA von K7 nach
 K8. Altbestand `old1_fundamentals` aufgelöst (End-to-End → K1, Rest = KommProt-Rekursion).
-Offen bleibt: `Exercises/ub1..ub3` (Übungsblätter) — nicht im Repo, auf K1–K8/L0–L6 umstellen (P7).
+Übungsblätter `ub1..ub3`: **abgelöst** — das Praktikum läuft vollständig über die containerlab-Labs
+L0–L4 (L5/L6 geplant); Wiederholungsfragen liegen als `Questions/k1…k8.md` vor (Markdown).
+GNS3-Server der ersten Wochen wurden außer Betrieb genommen.
 
 ## Veröffentlichung & Lizenz
 

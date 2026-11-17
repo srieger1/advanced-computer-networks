@@ -1,0 +1,51 @@
+# ACN Lab L4 — Szenario 2: IPv4-Routing in der Data Plane (2 Switches)
+# Deploy:  docker build -t acn-l4-p4:2026.10 . && containerlab deploy -t routing.clab.yml
+# Abbau:   containerlab destroy -t routing.clab.yml --cleanup
+# Doku:    labsheet.md, Abschnitt "Szenario 2 — IPv4-Routing"
+#
+# Zwei bmv2-Switches mit ipv4_routing.p4 (L3-Weiterleitung per Match-Action-Tabelle,
+# Port-rewrite + TTL-Dekrement), Hosts in zwei /24-Subnetzen. Routing-Entries werden
+# von den Studierenden per simple_switch_CLI installiert (kein ARP, kein p4utils —
+# bewusst ohne Learning-Switch-Controller, siehe labsheet.md, Hinweis zu Aufgabe 5).
+#
+# Mgmt-Netz IPv4-only (siehe Stolperfalle 9).
+mgmt:
+  ipv4-subnet: 172.20.20.0/24
+  ipv6-subnet: ""
+
+name: acn-l4-routing
+
+topology:
+  nodes:
+    h1:
+      kind: linux
+      image: alpine:3.20
+      exec:
+        - ip addr add 10.0.1.1/24 dev eth1
+        - ip link set eth1 up
+    h2:
+      kind: linux
+      image: alpine:3.20
+      exec:
+        - ip addr add 10.0.2.2/24 dev eth1
+        - ip link set eth1 up
+    s1:
+      kind: linux
+      image: acn-l4-p4:2026.10
+      binds:
+        - p4:/p4
+      exec:
+        - sh -c "p4c --target bmv2 --arch v1model /p4/ipv4_routing.p4 -o /tmp/build/ipv4_routing"
+        - sh -c "nohup simple_switch --thrift-port 9090 -i 1@eth1 -i 2@eth2 /tmp/build/ipv4_routing/ipv4_routing.json >/tmp/simple_switch.log 2>&1 &"
+    s2:
+      kind: linux
+      image: acn-l4-p4:2026.10
+      binds:
+        - p4:/p4
+      exec:
+        - sh -c "p4c --target bmv2 --arch v1model /p4/ipv4_routing.p4 -o /tmp/build/ipv4_routing"
+        - sh -c "nohup simple_switch --thrift-port 9090 -i 1@eth1 -i 2@eth2 /tmp/build/ipv4_routing/ipv4_routing.json >/tmp/simple_switch.log 2>&1 &"
+  links:
+    - endpoints: ["h1:eth1", "s1:eth1"]
+    - endpoints: ["s1:eth2", "s2:eth2"]
+    - endpoints: ["s2:eth1", "h2:eth1"]
