@@ -10,8 +10,8 @@ GNS3-/Mininet-Labs in ihren jeweiligen Unterordnern.
 | L0 | `L0_setup_tools/` | Setup, Werkzeuge, Netz-Diagnose | containerlab, Alpine, FRR | ✅ gebaut & verifiziert |
 | L1 | `L1_dcn_l2_lag/` | Layer 2 im RZ: STP vs. Link Aggregation (LACP), + VLAN/VXLAN (Szenario 3) | containerlab, Linux-Bridges/Bonds, FRR | ✅ gebaut & verifiziert (STP 30 s Ausfall vs. LACP 0 %; 802.1Q-Tag und VXLAN/vni 100 sichtbar) |
 | L2 | `L2_dcn_bgp_fabric/` | Leaf-Spine-Fabric mit BGP + Fehlertoleranz/BFD | containerlab, FRR | ✅ gebaut & verifiziert (Konvergenz ~60 s, ECMP, BFD-Failover) |
-| L3 | `L3_sdn_mininet/` | SDN mit Mininet/OpenFlow, eigene Topologien | Mininet, Controller (`os-ken`/ONOS) | ⏳ Portierung von `4_mininet_intro*` |
-| L4 | `L4_p4_programmable_data_plane/` | Programmable Data Plane mit P4 | Mininet/bmv2, `prona/p4-container` (Image aktualisieren!) | ⏳ Portierung von `5_p4_intro` |
+| L3 | `L3_sdn_mininet/` | SDN mit Mininet/OpenFlow, eigene Topologien | Mininet, Controller (`os-ken`/ONOS) | ✅ gebaut & verifiziert (`acn-l3-mininet`, pingall 0 %) |
+| L4 | `L4_p4_intro/` | Programmierbare Data Plane: Repeater, L2-Switch, **IPv4-Routing (Szenario 2)** | containerlab, `p4c` + bmv2 (eigenes Image `acn-l4-p4`) | ✅ gebaut & verifiziert (Routing h1→h2 über 2 Switches 0 %) |
 | L5 | `L5_multipath_quic_taps/` | Multipath QUIC & Transport Services (TAPS) | containerlab (2 Pfade, `netem`), QUIC-Stack nach Didaktik-Kriterium, PyTAPS | ⏳ neu zu bauen |
 | L6 | `L6_networking_for_ai/` | Incast, Tail-Latency, ECN/PFC, ECMP vs. Packet Spraying | containerlab, FRR, `iperf3` | ⏳ neu zu bauen |
 

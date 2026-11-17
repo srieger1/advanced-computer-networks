@@ -113,6 +113,6 @@ GNS3-Server der ersten Wochen wurden außer Betrieb genommen.
 ## Offene Punkte
 
 - Labs L5 und L6 bauen (P6) — Stack picoquic bzw. Incast/ECN-Setup.
-- `Exercises/`/`Questions/` auf K1–K8 und L0–L6 mappen (P7), neue Fragen für K7-Neu/K8.
+- ~~`Exercises/`/`Questions/` auf K1–K8 mappen (P7)~~ — Questions: **erledigt** (`Questions/k1…k8.md`); Übungsblätter: abgelöst (Praktikum = Labs).
 - Entscheidung über die **13 unreferenzierten OK-Bilder** (Liste in `PLANNED-CHANGES.md`):
   löschen (Clean Cutover) oder archivieren — copyright-kritische sind bereits in `copyright/`.
