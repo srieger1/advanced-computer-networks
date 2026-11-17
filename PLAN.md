@@ -89,9 +89,11 @@ Zielstack (Entscheidungen 2026-09-24/10-04): **FRR, wo es geht** (`frrouting/frr
 | L5 | `Labs/L5_multipath_quic_taps/` | **Neu:** Multipath QUIC & TAPS — Client mit 2 Pfaden (10 ms vs. 80 ms + 2 % Loss, `netem`), Single-Path vs. Aggregation vs. Failover, Scheduling-Vergleich, Reordering/Head-of-Line, TAPS-Anwendung (RFC 9621–9623); Stack: **picoquic** (Fallback ngtcp2), qlog/`tshark` als Beobachtungsweg | zu L11/L12 (K7) | ⏳ neu zu bauen (P6) |
 | L6 | `Labs/L6_networking_for_ai/` | **Neu:** Networking for AI — Leaf-Spine + Incast (`iperf3 -P`), Tail-Latency/Straggler, ECN/AQM (`ss -ti`), ECMP vs. Packet Spraying, Ring-AllReduce-Simulation (Python), IB/RoCE/UEC-Diskussion | zu L13/L14 (K8) | ⏳ neu zu bauen (P6) |
 
-Übungsblätter/Fragen: `Exercises/ub1..ub3` und `Questions/q1..q9` referenzieren noch die alten
-Kapitelnummern (K1–K6) und GNS3-Lab-Namen; sie werden auf K1–K8 und L0–L6 umgestellt und um Fragen
-zu Multipath QUIC/TAPS und Networking for AI ergänzt (je 6–10 im bestehenden Stil).
+Fragen: **erledigt (2026-11-17)** — `Questions/k1…k8.md` in Markdown (je Kapitel eine Datei),
+migriert aus `../ACN-WiSe2526/Questions/*.tex`; K3 (Netzvirtualisierung) und K8 (Netze für KI)
+neu, OpenFlow-Detailfragen gestrafft (K4), DPU-Vertiefung nach K8 verschoben, RDMA von K7 nach
+K8. Altbestand `old1_fundamentals` aufgelöst (End-to-End → K1, Rest = KommProt-Rekursion).
+Offen bleibt: `Exercises/ub1..ub3` (Übungsblätter) — nicht im Repo, auf K1–K8/L0–L6 umstellen (P7).
 
 ## Veröffentlichung & Lizenz
 
