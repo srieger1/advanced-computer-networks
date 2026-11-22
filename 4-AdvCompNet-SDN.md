@@ -131,15 +131,19 @@ Sebastian Rieger · MMNet
 ## Kapitelübersicht
 
 **4.1 Vom verteilten Netz zur zentralen Control Plane**
+
 - Data, Control und Management Plane · SDN als Paradigma · Traffic Engineering
 
 **4.2 OpenFlow – was es war und was davon blieb**
+
 - Flow Tables und Controller · Beispiele · Grenzen des Protokolls
 
 **4.3 Control Plane: Controller, Gremien, Google**
+
 - ONOS und die Controller-Landschaft · ONF und die Linux Foundation · B4, Jupiter, Orion · Verifikation
 
 **4.4 Betrieb: Telemetrie und Feature Velocity**
+
 - Herausforderungen im Betrieb · Metrics, Logs, Traces · Feature Velocity
 
 ---
@@ -169,13 +173,22 @@ Data, Control und Management Plane · SDN als Paradigma · Traffic Engineering
 
 ## Data, Control und Management Plane
 
-| Ebene | Aufgabe | Beispiele | Zeitskala |
-|---|---|---|---|
-| **Data Plane** | weiterleiten, filtern, puffern, markieren | Forwarding-Tabelle, TCAM, ASIC | ns bis µs |
-| **Control Plane** | Topologie, Routen, Tabellen füllen | Spanning Tree, OSPF, BGP | ms bis s |
-| **Management Plane** | konfigurieren, überwachen, Fehler suchen | SNMP, SSH, Controller-API | Minuten bis Tage |
+<div class="columns-15">
+<div>
 
-![h:140px](figures/3-sdn/fig-12.png)
+| Ebene                | Aufgabe                                   | Beispiele                      | Zeitskala        |
+|----------------------|-------------------------------------------|--------------------------------|------------------|
+| **Data Plane**       | weiterleiten, filtern, puffern, markieren | Forwarding-Tabelle, TCAM, ASIC | ns bis µs        |
+| **Control Plane**    | Topologie, Routen, Tabellen füllen        | Spanning Tree, OSPF, BGP       | ms bis s         |
+| **Management Plane** | konfigurieren, überwachen, Fehler suchen  | SNMP, SSH, Controller-API      | Minuten bis Tage |
+
+</div>
+<div>
+
+![h:360px](figures/3-sdn/fig-12.png)
+
+</div>
+</div>
 
 **Fazit:** Drei Ebenen, drei Zeitskalen — der Engpass der klassischen Architektur sitzt in der Mitte.
 
@@ -185,13 +198,22 @@ Data, Control und Management Plane · SDN als Paradigma · Traffic Engineering
 
 ## Traditionelle Netze: verteilte Control Plane
 
+<div class="columns-15">
+<div>
+
 - Jeder Router und Switch entscheidet **selbst** über Routen und Forwarding
 - Kein Gerät kennt das Netz als Ganzes, nur das, was seine Nachbarn ihm erzählen
 - Konfiguriert wird **pro Gerät** — Fehlkonfiguration ist die häufigste Ausfallursache
 - Neue Dienste brauchen neue Protokolle und Software auf **allen** Geräten
 - Monitoring sieht nur, was ein einzelnes Gerät meldet
 
-![h:160px](figures/3-sdn/fig-09.png)
+</div>
+<div>
+
+![h:200px](figures/3-sdn/fig-09.png)
+
+</div>
+</div>
 
 **Fazit:** Verteiltes Denken skaliert gut — aber netzwerkweite Aussagen sind so kaum möglich.
 
@@ -201,13 +223,22 @@ Data, Control und Management Plane · SDN als Paradigma · Traffic Engineering
 
 ## SDN: Intelligenz wandert in den Controller
 
+<div class="columns-15">
+<div>
+
 - **Trennung** von Control Plane und Data Plane: Switches forwarden, der Controller entscheidet
 - **Logisch zentraler** Controller mit globaler Sicht auf Topologie, Last und Policies
   - „smart and slow“ steuert „dumb and fast“
 - **Programmierbarkeit:** Anwendungen beschreiben, *was* das Netz tun soll
 - Southbound-Schnittstellen: OpenFlow, OVSDB, OpFlex, P4Runtime, gNMI
 
-![h:150px](figures/3-sdn/fig-11.png)
+</div>
+<div>
+
+![h:200px](figures/3-sdn/fig-11.png)
+
+</div>
+</div>
 
 <div class="takeaway">
 
@@ -221,13 +252,22 @@ SDN ist ein **Paradigma** — logisch zentralisierte, programmierbare Control Pl
 
 ## Warum eine logisch zentrale Control Plane?
 
+<div class="columns-15">
+<div>
+
 - **Einfacheres Management:** Fehlkonfigurationen vermeiden, Verkehr flexibler führen
 - **Tabellenbasiertes Forwarding** macht Router „programmierbar“
   - zentral berechnen und verteilen ist einfacher als in jedem Router verteilt rechnen
 - **Offene, herstellerunabhängige** Control-Plane-Implementierungen
-- „Logisch“ heißt nicht physisch: der Controller selbst wird **repliziert und skaliert**
+- „Logisch zentral“ heißt nicht physisch: der Controller selbst wird **repliziert und skaliert**
 
-![h:150px](figures/3-sdn/copyright/fig-38.png)
+</div>
+<div>
+
+![h:230px](figures/3-sdn/copyright/fig-38.png)
+
+</div>
+</div>
 
 **Fazit:** Der Gewinn liegt im *logisch* zentralen Blick bei verteilter Ausführung.
 
@@ -237,11 +277,12 @@ SDN ist ein **Paradigma** — logisch zentralisierte, programmierbare Control Pl
 
 ## Traffic Engineering: der Unterschied wird sichtbar
 
-- Frage: Kann das Netz blaue und rote Flüsse **unterschiedlich** führen?
+- Frage: Kann das Netz blaue und rote Flüsse **unterschiedlich** führen? (Bild 5-85 [Kurose Ross Chapter 5 v9](https://gaia.cs.umass.edu/kurose_ross/ppt-9e/Chapter_5_v9.0.pptx))
 - Mit zieladressiertem Forwarding und OSPF/BGP: **nein** — alle folgen demselben Weg
 - Mit zentraler Control Plane: Regeln pro Fluss und Zeitpunkt
   - Umleitung bei Congestion, Wartung oder Anomalie
 - Nebeneffekt: Last landet dort, wo Kapazität frei ist
+- Mit MPLS etc. konnte man auch Traffic steuern, aber so richtig dynamisch erst mit SDN und Segment Routing
 
 **Fazit:** Erst die zentrale Sicht erlaubt, Traffic nach dem Ziel der Anwendung zu führen.
 
@@ -261,13 +302,22 @@ Flow Tables und Controller · Beispiele · Grenzen des Protokolls
 
 ## Was OpenFlow war
 
+<div class="columns-15">
+<div>
+
 - Die erste **offene Southbound-API**: ein Controller installiert Flow-Regeln in den Switches
 - **Flow Table Entry = Rule | Action | Stats** — Match auf Header-Felder plus Zähler
 - **Pipeline** über Tabellen 0…n mit Action Set, in Hardware als TCAM umgesetzt
 - **Northbound** die Anwendungen, **southbound** die Geräte; mehrere Controller möglich
 - **Asynchrone Events** (Packet-In, Port-Status, Fehler) melden Ereignisse an den Controller
 
-![h:150px](figures/3-sdn/fig-16.png)
+</div>
+<div>
+
+![h:360px](figures/3-sdn/fig-16.png)
+
+</div>
+</div>
 
 <div class="takeaway">
 
@@ -305,21 +355,23 @@ OpenFlow trennte Forwarding und Kontrolle — und machte SDN demonstrierbar.
 <div>
 
 **Dynamische Access Control**
+
 - der Controller inspiziert das erste Paket einer Verbindung
 - er prüft seine Policy und installiert passende Regeln
 - weitere Pakete laufen im **Fast Path** am Controller vorbei
 
-![h:140px](figures/3-sdn/fig-22.png)
+![h:200px](figures/3-sdn/fig-22.png)
 
 </div>
 <div>
 
 **Load Balancer**
+
 - der Controller verteilt Flüsse mehrerer Clients auf mehrere Server
 - Regeln dürfen über mehrere Switches führen → **Multipathing**
 - Health-Checks sind Teil der Control-Plane-Anwendung
 
-![h:140px](figures/3-sdn/fig-23.png)
+![h:200px](figures/3-sdn/fig-23.png)
 
 </div>
 </div>
@@ -336,21 +388,23 @@ OpenFlow trennte Forwarding und Kontrolle — und machte SDN demonstrierbar.
 <div>
 
 **Seamless Mobility**
+
 - der Controller erfährt die neue Position einer VM — aus Paketen oder vom Hypervisor
 - er passt die Flow Tables an und leitet den Verkehr um
 - die Verbindung bleibt bestehen, die Adresse bleibt gleich
 
-![h:150px](figures/3-sdn/fig-24.png)
+![h:200px](figures/3-sdn/fig-24.png)
 
 </div>
 <div>
 
 **Slicing und Multi-Tenancy**
+
 - jeder Tenant bekommt einen eigenen „logical network slice“
 - Tenants sehen nur ihre eigene Topologie, teils mit eigenem Controller
 - ein Root-Controller begrenzt deren Rechte
 
-![h:150px](figures/3-sdn/fig-25.png)
+![h:200px](figures/3-sdn/fig-25.png)
 
 </div>
 </div>
@@ -371,12 +425,21 @@ ONOS und die Controller-Landschaft · ONF und die Linux Foundation · B4, Jupite
 
 ## Controller im Detail: ONOS
 
+<div class="columns-15">
+<div>
+
 - Control-Apps laufen **oberhalb** des Controllers, getrennt von der Plattform
 - **Intent Framework:** der Betreiber beschreibt *was* gelten soll, nicht *wie* es umgesetzt wird
 - **verteilter Core:** Replikation, Skalierung und Verfügbarkeit sind Kernziele
 - produktiv bei Betreibern wie AT&T, Comcast, Deutsche Telekom und NTT Communications
 
-![h:180px](figures/3-sdn/fig-33.png)
+</div>
+<div>
+
+![h:440px](figures/3-sdn/fig-33.png)
+
+</div>
+</div>
 
 💡 [ONOS](https://github.com/opennetworkinglab/onos) – Netz-Betriebssystem unter der Linux Foundation
 
@@ -390,6 +453,7 @@ ONOS und die Controller-Landschaft · ONF und die Linux Foundation · B4, Jupite
 <div>
 
 **Controller**
+
 - **ONOS** — betreibergetrieben, Intent-basiert
 - **OpenDaylight** — breite Industrieunterstützung; proprietär daneben ACI und NSX
 - **os-ken** — gepflegter Ryu-Nachfolger; Ryu selbst ist eingestellt
@@ -398,6 +462,7 @@ ONOS und die Controller-Landschaft · ONF und die Linux Foundation · B4, Jupite
 <div>
 
 **Switches und Labore**
+
 - **Open vSwitch** (Standard) und **Stratum** (P4Runtime, gNMI)
 - White-Box- und OpenFlow-fähige Switches
 - **Mininet** (OpenFlow, Lab L3/L4), **containerlab** (Data Center, Lab L1/L2)
@@ -478,18 +543,27 @@ Herausforderungen im Betrieb · Metrics, Logs, Traces · Feature Velocity
 
 ## Herausforderungen im Betrieb
 
-- **Ausfall der Control Plane:** die Data Plane forwardt weiter — aber nichts Neues wird installiert
+<div class="columns-15">
+<div>
+
+- **Ausfall der Control Plane:** die Data Plane „forward“et weiter — aber nichts Neues wird installiert
   - Gegenmittel: mehrere Controller, Replikation, klare Ausfallregeln
 - **Konsistenz:** replizierte Controller müssen denselben Zustand kennen
 - **Performance:** was kein Switch gelernt hat, landet im langsamen Pfad über den Controller
 - **Skalierung:** Föderation über Betreibergrenzen ist bis heute offen
 
-![h:120px](figures/3-sdn/fig-20.png)
+</div>
+<div>
+
+![h:200px](figures/3-sdn/fig-20.png)
 
 <div class="food-for-thought">
 
 🧠 Was passiert bei Ausfall der Control Plane — und warum ist das der wichtigste Ausfallmodus?
 
+</div>
+
+</div>
 </div>
 
 **Fazit:** SDN verschiebt das Risiko: Die Data Plane bleibt schnell, die Control Plane wird kritisch.
@@ -572,6 +646,7 @@ Herausforderungen im Betrieb · Metrics, Logs, Traces · Feature Velocity
 <div class="card">
 
 **Referenzliteratur**
+
 - 💡 [SDN-Buch Kap. 1–3](https://sdn.systemsapproach.org/) (CC BY-NC-ND)
 - 💡 [7E Kap. 10 – Operating Networks](https://7e.systemsapproach.org/operations.html)
 - 💡 [SDN-Buch Kap. 10 – Future of SDN](https://sdn.systemsapproach.org/future.html)
@@ -581,6 +656,7 @@ Herausforderungen im Betrieb · Metrics, Logs, Traces · Feature Velocity
 <div class="card">
 
 **Paper**
+
 - 💡 [Google B4 (SIGCOMM 2013)](https://dl.acm.org/doi/10.1145/2534169.2486019)
 - 💡 [Jupiter Evolving (SIGCOMM 2022)](https://dl.acm.org/doi/10.1145/3544216.3544265)
 - 💡 [ORION Control Plane (NSDI 2021)](https://www.usenix.org/conference/nsdi21/presentation/ferguson)
@@ -589,6 +665,7 @@ Herausforderungen im Betrieb · Metrics, Logs, Traces · Feature Velocity
 <div class="card">
 
 **Projekte und Werkzeuge**
+
 - 💡 [ONOS](https://github.com/opennetworkinglab/onos) · [OpenDaylight](https://www.opendaylight.org/)
 - 💡 [Stratum](https://stratumproject.org/) · [Open vSwitch](https://www.openvswitch.org/)
 - 💡 [Batfish](https://www.batfish.org/) – Verifikation vor dem Rollout
