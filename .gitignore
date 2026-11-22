@@ -37,5 +37,8 @@ Labs/**/authorized_keys
 PLANNED-CHANGES.md
 CHANGELOG.md
 AGENTS.md
+# Python-Laufzeitartefakte (Lab-Code wird in den Labs importiert)
+__pycache__/
+
 # Dropbox/Nextcloud-Marker
 .dropbox

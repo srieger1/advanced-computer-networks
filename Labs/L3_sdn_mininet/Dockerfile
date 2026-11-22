@@ -14,9 +14,14 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
       mininet openvswitch-switch iproute2 iputils-ping net-tools tcpdump \
-      iperf3 python3-pip less vim-tiny && \
+      iperf3 python3-pip less vim nano psmisc && \
     rm -rf /var/lib/apt/lists/* && \
     pip install --break-system-packages os-ken==4.2.2 tinyrpc && \
+    # Stolperfalle 3: Mininet wartet im iperf-Test auf 2 Server-Reports (Probe + Test),
+    # iperf 2.1.9 liefert aber nur einen (Probe-Verbindung erzeugt keinen Report) —
+    # der monitor()-Loop haengt endlos. Patch: count 2 -> 1.
+    sed -i "s/count = 2 if l4Type == 'TCP' else 1/count = 1/" \
+      /usr/lib/python3/dist-packages/mininet/net.py && \
     mn --version && ovs-vsctl --version | head -1 && \
     echo 'service() { /usr/share/openvswitch/scripts/ovs-ctl start; }' >/etc/profile.d/ovs.sh
 
