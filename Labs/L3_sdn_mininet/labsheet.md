@@ -23,7 +23,7 @@ warum ein Switch ohne Control Plane nichts weiterleitet.
   docker build -t acn-l3-mininet:2026.10 .
   ```
   Ryu selbst ist seit 04/2024 ohne Commits und baut auf Python 3.12 nicht mehr — os-ken
-  (OpenStack-Gabelung) ist der Ersatz. **Stolperfalle:** die os-ken-Wheels enthalten weder
+  (OpenStack-Fork) ist der Ersatz, und wurde schon im letzten Jahr für ACN verwendet. **Stolperfalle:** die os-ken-Wheels enthalten weder
   `os_ken/cmd` (Manager) noch `app/wsgi` — beides liegt hier als portierter Patch bei
   (`osken_patch/`), inkl. `osken-manager` als Ersatz für `ryu-manager`.
 
