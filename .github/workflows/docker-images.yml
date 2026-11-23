@@ -1,0 +1,49 @@
+# ACN Lab-Container-Images nach ghcr.io bauen (Sicherheitsnetz, wenn lokale
+# Builds hängen — apt/DNS/MTU-Probleme v. a. in WSL2/VPN; siehe Lab-L3-Dockerfile).
+# Pull:  docker pull ghcr.io/srieger1/acn-l3-mininet:2026.10
+#        docker pull ghcr.io/srieger1/acn-l4-p4:2026.10
+name: Lab-Container-Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "Labs/**/Dockerfile"
+      - ".github/workflows/docker-images.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: acn-l3-mininet
+            context: Labs/L3_sdn_mininet
+          - name: acn-l4-p4
+            context: Labs/L4_p4_intro
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:2026.10
+            ghcr.io/${{ github.repository_owner }}/${{ matrix.name }}:latest
+          cache-from: type=gha,scope=${{ matrix.name }}
+          cache-to: type=gha,scope=${{ matrix.name }},mode=max

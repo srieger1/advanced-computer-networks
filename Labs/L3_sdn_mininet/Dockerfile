@@ -4,6 +4,10 @@
 # Ryu selbst ist seit 04/2024 ohne Commits). Läuft als containerlab-Knoten (privileged):
 #
 #   docker build -t acn-l3-mininet:2026.10 .
+#   Hängt der Build bei apt (Step 2, DNS/MTU-Probleme z. B. in WSL2/VPN):
+#   docker build --network=host -t acn-l3-mininet:2026.10 .
+#   Fertiges Image: ghcr.io/srieger1/acn-l3-mininet:2026.10 (CI-Build)
+#                  docker.io/prona/acn-l3-mininet:2026.10
 #   Smoke:  docker run --rm --privileged acn-l3-mininet:2026.10 sh -c \
 #           "/usr/share/openvswitch/scripts/ovs-ctl start && mn --test pingall"
 #           (OVS-Daemon startet im rohen docker run NICHT selbst — ohne ovs-ctl start
@@ -12,7 +16,8 @@
 FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=20 \
+      -o Acquire::https::Timeout=20 update && apt-get install -y --no-install-recommends \
       mininet openvswitch-switch iproute2 iputils-ping net-tools tcpdump \
       iperf3 python3-pip less vim nano psmisc ethtool && \
     rm -rf /var/lib/apt/lists/* && \
