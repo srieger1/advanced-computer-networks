@@ -8,6 +8,9 @@
 # nicht weiter gepflegt (upstream: letzter Commit 11/2022) — dieses Image ersetzt ihn.
 #
 # Build:     docker build -t acn-l4-p4:2026.10 .
+#            haengt der Build (DNS/MTU, v. a. WSL2/VPN): docker build --network=host -t acn-l4-p4:2026.10 .
+# Pull:      docker pull ghcr.io/srieger1/acn-l4-p4:2026.10        (CI-Build)
+#            docker tag ghcr.io/srieger1/acn-l4-p4:2026.10 acn-l4-p4:2026.10
 # Kontrolle: docker run --rm acn-l4-p4:2026.10 sh -c 'p4c --version && simple_switch --version'
 
 FROM p4lang/behavioral-model:latest AS bmv2

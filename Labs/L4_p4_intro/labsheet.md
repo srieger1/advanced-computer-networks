@@ -23,6 +23,13 @@ kompilieren, laden, Laufzeit-Tabellen manipulieren — statt per Weboberfläche 
   cd Labs/L4_p4_intro
   docker build -t acn-l4-p4:2026.10 .
   ```
+  Hängt der Build (DNS/MTU-Probleme, v. a. in WSL2/VPN), hilft:
+  `docker build --network=host -t acn-l4-p4:2026.10 .`
+  Alternativ das vorgebaute Image pullen und auf den erwarteten Namen taggen:
+  ```bash
+  docker pull ghcr.io/srieger1/acn-l4-p4:2026.10
+  docker tag ghcr.io/srieger1/acn-l4-p4:2026.10 acn-l4-p4:2026.10
+  ```
   Das Image kombiniert die offiziell gepflegten p4lang-Images `p4lang/p4c` (p4c 1.2.5.18) und
   `p4lang/behavioral-model` (bmv2 1.15.7, identische Ubuntu-24.04-Basis). Der frühere
   `prona/p4-container` (p4c 1.2.3.6, OVS-/learn-sdn-hub-Ballast) wird upstream nicht mehr gepflegt

@@ -22,6 +22,14 @@ warum ein Switch ohne Control Plane nichts weiterleitet.
   cd Labs/L3_sdn_mininet
   docker build -t acn-l3-mininet:2026.10 .
   ```
+  Hängt der Build bei `apt` (DNS/MTU-Probleme, v. a. in WSL2/VPN), hilft:
+  `docker build --network=host -t acn-l3-mininet:2026.10 .`
+  Alternativ das vorgebaute Image pullen und auf den erwarteten Namen taggen:
+  ```bash
+  docker pull ghcr.io/srieger1/acn-l3-mininet:2026.10
+  docker tag ghcr.io/srieger1/acn-l3-mininet:2026.10 acn-l3-mininet:2026.10
+  # alternativ: docker pull docker.io/prona/acn-l3-mininet:2026.10 (+ docker tag dito)
+  ```
   Ryu selbst ist seit 04/2024 ohne Commits und baut auf Python 3.12 nicht mehr — os-ken
   (OpenStack-Fork) ist der Ersatz, und wurde schon im letzten Jahr für ACN verwendet. **Stolperfalle:** die os-ken-Wheels enthalten weder
   `os_ken/cmd` (Manager) noch `app/wsgi` — beides liegt hier als portierter Patch bei
